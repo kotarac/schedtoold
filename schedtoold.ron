@@ -1,0 +1,27 @@
+Config(
+    // version has to match the version currently used by schedtoold
+    // once the config format gets changed, the version will be bumped
+    version: 1,
+    items: [
+        // each item is a tuple of process name and schedtool flags
+        //
+        // name is matched like below:
+        //
+        // /proc/{pid}/cmdline ends with the name
+        //  OR
+        // /proc/{pid}/exe links to a path that ends with the name
+        //
+        //
+        // for schedtool flags check:
+        // man schedtool
+
+        // examples below
+        //
+        // ("pipewire", "-F -p 4"),
+        // ("pipewire-pulse", "-F -p 4"),
+        // ("wireplumber", "-F -p 4"),
+        // ("Xorg", "-F -p 3"),
+        // ("Xwayland", "-F -p 3"),
+        // ("sway", "-F -p 3"),
+    ],
+)

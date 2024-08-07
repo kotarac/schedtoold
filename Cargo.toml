@@ -1,0 +1,12 @@
+[package]
+name = "schedtoold"
+description = "schedtoold - daemon for automatically adjusting process scheduling"
+authors = ["Stipe Kotarac <stipe@kotarac.net>"]
+version = "0.1.0"
+license = "GPL-2.0-only"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.0.26", features = ["derive"] }
+ron = "0.8.1"
+serde = { version = "1.0.204", features = ["derive"] }

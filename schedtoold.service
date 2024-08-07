@@ -1,0 +1,8 @@
+[Unit]
+Description=schedtoold - daemon for automatically adjusting process scheduling
+
+[Service]
+ExecStart=/usr/bin/schedtoold -v -c /etc/schedtoold.ron
+
+[Install]
+WantedBy=multi-user.target
