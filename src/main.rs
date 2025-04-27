@@ -5,6 +5,7 @@ use std::io;
 use std::process;
 use std::thread;
 use std::time;
+use std::collections::HashSet;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -85,7 +86,7 @@ fn main() {
     let config = get_config(&args.config);
     let interval = time::Duration::from_millis(args.interval);
 
-    let mut pids_processed: Vec<u32> = Vec::new();
+    let mut pids_processed: HashSet<u32> = HashSet::new();
 
     loop {
         let pids_current = get_pids_current().expect("couldn't get pids");
@@ -110,17 +111,27 @@ fn main() {
                     );
                 }
 
-                process::Command::new("schedtool")
-                    .args(flags.split(" "))
+                let status = process::Command::new("schedtool")
+                    .args(flags.split_whitespace())
                     .arg(format!("{}", *pid))
                     .stdout(process::Stdio::null())
                     .stderr(process::Stdio::null())
-                    .status()
-                    .expect("couldn't run schedtool");
+                    .status();
+
+                match status {
+                    Ok(status) => {
+                        if !status.success() {
+                            eprintln!("pid {} schedtool failed with flags {}: {:?}", pid, flags, status);
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("pid {} failed to execute schedtool with flags {}: {}", pid, flags, e);
+                    }
+                }
             }
         }
 
-        pids_processed = pids_current;
+        pids_processed = pids_current.into_iter().collect();
 
         thread::sleep(interval);
     }
