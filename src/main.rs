@@ -63,21 +63,17 @@ fn get_exe_by_pid(pid: &u32) -> String {
     }
 }
 
-fn get_pids_current() -> io::Result<Vec<u32>> {
+fn get_pids_current() -> io::Result<HashSet<u32>> {
     Ok(fs::read_dir("/proc")?
         .flatten()
-        .map(|entry| entry.path())
-        .flat_map(|path| {
-            path.strip_prefix("/proc")
-                .unwrap()
+        .filter_map(|entry| {
+            entry
                 .file_name()
-                .unwrap()
                 .to_str()
-                .unwrap()
-                .parse::<u32>()
+                .and_then(|s| s.parse::<u32>().ok())
         })
         .filter(|pid| pid != &1 && pid != &process::id())
-        .collect::<Vec<u32>>())
+        .collect::<HashSet<u32>>())
 }
 
 fn main() {
@@ -91,11 +87,7 @@ fn main() {
     loop {
         let pids_current = get_pids_current().expect("couldn't get pids");
 
-        for pid in pids_current.iter() {
-            if pids_processed.contains(pid) {
-                continue;
-            }
-
+        for pid in pids_current.difference(&pids_processed) {
             let exe = get_exe_by_pid(pid);
             let cmdline = get_cmdline_by_pid(pid);
 
@@ -131,7 +123,7 @@ fn main() {
             }
         }
 
-        pids_processed = pids_current.into_iter().collect();
+        pids_processed = pids_current;
 
         thread::sleep(interval);
     }
