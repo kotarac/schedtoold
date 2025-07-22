@@ -1,11 +1,11 @@
 use clap::Parser;
 use serde::Deserialize;
+use std::collections::HashSet;
 use std::fs;
 use std::io;
 use std::process;
 use std::thread;
 use std::time;
-use std::collections::HashSet;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -47,7 +47,7 @@ fn get_config(path: &str) -> Config {
 }
 
 fn get_cmdline_by_pid(pid: &u32) -> String {
-    match fs::read_to_string(format!("/proc/{}/cmdline", pid))
+    match fs::read_to_string(format!("/proc/{pid}/cmdline"))
         .unwrap_or(String::new())
         .split_once('\0')
     {
@@ -57,7 +57,7 @@ fn get_cmdline_by_pid(pid: &u32) -> String {
 }
 
 fn get_exe_by_pid(pid: &u32) -> String {
-    match fs::read_link(format!("/proc/{}/exe", pid)) {
+    match fs::read_link(format!("/proc/{pid}/exe")) {
         Ok(path) => path.into_os_string().into_string().unwrap_or(String::new()),
         _ => String::new(),
     }
@@ -98,8 +98,7 @@ fn main() {
 
                 if args.verbose {
                     println!(
-                        "matched pid = {:?}, exe = {:?}, cmdline = {:?}, name = {:?}, flags = {:?}",
-                        pid, exe, cmdline, name, flags
+                        "matched pid = {pid:?}, exe = {exe:?}, cmdline = {cmdline:?}, name = {name:?}, flags = {flags:?}"
                     );
                 }
 
@@ -113,11 +112,15 @@ fn main() {
                 match status {
                     Ok(status) => {
                         if !status.success() {
-                            eprintln!("pid {} schedtool failed with flags {}: {:?}", pid, flags, status);
+                            eprintln!(
+                                "pid {pid} schedtool failed with flags {flags}: {status:?}"
+                            );
                         }
                     }
                     Err(e) => {
-                        eprintln!("pid {} failed to execute schedtool with flags {}: {}", pid, flags, e);
+                        eprintln!(
+                            "pid {pid} failed to execute schedtool with flags {flags}: {e}"
+                        );
                     }
                 }
             }
