@@ -1,10 +1,14 @@
 [package]
 name = "schedtoold"
-description = "schedtoold - daemon for automatically adjusting process scheduling"
-authors = ["Stipe Kotarac <stipe@kotarac.net>"]
 version = "0.1.0"
-license = "GPL-2.0-only"
 edition = "2021"
+
+authors = ["Stipe Kotarac <stipe@kotarac.net>"]
+description = "schedtoold - daemon for automatically adjusting process scheduling"
+license = "GPL-2.0-only"
+
+homepage = "https://github.com/kotarac/schedtoold"
+repository = "https://github.com/kotarac/schedtoold"
 
 [dependencies]
 clap = { version = "4.5.41", features = ["derive"] }

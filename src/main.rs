@@ -112,15 +112,11 @@ fn main() {
                 match status {
                     Ok(status) => {
                         if !status.success() {
-                            eprintln!(
-                                "pid {pid} schedtool failed with flags {flags}: {status:?}"
-                            );
+                            eprintln!("pid {pid} schedtool failed with flags {flags}: {status:?}");
                         }
                     }
                     Err(e) => {
-                        eprintln!(
-                            "pid {pid} failed to execute schedtool with flags {flags}: {e}"
-                        );
+                        eprintln!("pid {pid} failed to execute schedtool with flags {flags}: {e}");
                     }
                 }
             }
