@@ -11,9 +11,13 @@ homepage = "https://github.com/kotarac/schedtoold"
 repository = "https://github.com/kotarac/schedtoold"
 
 [dependencies]
+anyhow = "1.0.95"
 clap = { version = "4.5.41", features = ["derive"] }
 ron = "0.10.1"
 serde = { version = "1.0.219", features = ["derive"] }
+
+[dev-dependencies]
+tempfile = "3.10.1"
 
 [profile.release]
 lto = true
